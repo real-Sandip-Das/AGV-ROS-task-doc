@@ -260,7 +260,7 @@ rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 
 Note: \
 The `-r` flag enables repetitive publishing of the message at a certain frequency(10 Hz in my case)
 
-![Screencast](screencast.gif)
+![Screencast](Images/screencast.gif)
 
 ### Task 4
 
