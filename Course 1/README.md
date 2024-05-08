@@ -152,3 +152,155 @@ Running gazebo with provided ROS Interface
 ```bash
 rosrun gazebo_ros gazebo
 ```
+
+## Exercises
+
+### Part 1
+
+```bash
+mkdir -p  ~/Workspaces/smb_ws/src
+cd ~/Workspaces/smb_ws/
+catkin init
+cd src
+ln -s ~/git/smb_common/
+sudo apt-get install ros-noetic-hector-gazebo-plugins
+catkin build smb_gazebo
+```
+
+Screenshot of the `catkin build` command: \
+![Catkin Build](Images/catkin_build_smb_gazebo.png)
+
+### Part 2
+
+```bash
+source ../devel/setup.bash
+sudo apt-get install -y ros-noetic-velodyne-description
+roslaunch smb_gazebo smb_gazebo.launch
+```
+
+Launched Gazebo Window: \
+![Gazebo Window](Images/gazebo-part2.png)
+
+List of Nodes(`rosnode list`):
+
+```plaintext
+/base_controller_spawner
+/gazebo
+/gazebo_gui
+/rosout
+/smb_robot_state_publisher
+```
+
+List of Topics(`rostopic list`):
+
+```plaintext
+/clock
+/cmd_vel
+/gazebo/link_states
+/gazebo/model_states
+/gazebo/parameter_descriptions
+/gazebo/parameter_updates
+/gazebo/performance_metrics
+/gazebo/set_link_state
+/gazebo/set_model_state
+/gazebo_ros_control/pid_gains/LF_WHEEL_JOINT/parameter_descriptions
+/gazebo_ros_control/pid_gains/LF_WHEEL_JOINT/parameter_updates
+/gazebo_ros_control/pid_gains/LH_WHEEL_JOINT/parameter_descriptions
+/gazebo_ros_control/pid_gains/LH_WHEEL_JOINT/parameter_updates
+/gazebo_ros_control/pid_gains/RF_WHEEL_JOINT/parameter_descriptions
+/gazebo_ros_control/pid_gains/RF_WHEEL_JOINT/parameter_updates
+/gazebo_ros_control/pid_gains/RH_WHEEL_JOINT/parameter_descriptions
+/gazebo_ros_control/pid_gains/RH_WHEEL_JOINT/parameter_updates
+/imu0
+/imu0/accel/parameter_descriptions
+/imu0/accel/parameter_updates
+/imu0/bias
+/imu0/rate/parameter_descriptions
+/imu0/rate/parameter_updates
+/imu0/yaw/parameter_descriptions
+/imu0/yaw/parameter_updates
+/joint_states
+/odom
+/rosout
+/rosout_agg
+/smb_velocity_controller/cmd_vel
+/smb_velocity_controller/odom
+/smb_velocity_controller/parameter_descriptions
+/smb_velocity_controller/parameter_updates
+/tf
+/tf_static
+```
+
+List of topics that were continuously being published with their approximate frequency(number of messages published in each second) found out using the `rostopic hz` command
+
+```plaintext
+/clock: 1000
+/gazebo/link_states: 1000
+/gazebo/model_states: 1000
+/gazebo/performance_metrics: 5
+/imu0: 390
+/imu0/bias: 390
+/joint_states: 50
+/odom: 100
+/smb_velocity_controller/odom/: 50
+/tf: 100
+```
+
+All the other topics were either not publishing any messages at all or only sending one message at the start of a subscription(found out using the `rostopic echo` command)
+
+Screenshot of `rqt_graph`: \
+![rqt_graph](Images/rqt_graph.png)
+
+### Task 3
+
+```bash
+rostopic pub -r 10 /cmd_vel geometry_msgs/Twist  '{linear:  {x: 0.1, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}'
+```
+
+Note: \
+The `-r` flag enables repetitive publishing of the message at a certain frequency(10 Hz in my case)
+
+![Screencast](screencast.gif)
+
+### Task 4
+
+```bash
+cd ~/git
+git clone https://github.com/ros-teleop/teleop_twist_keyboard
+cd ~/Workspaces/smb_ws/src/
+ln -s ~/git/teleop_twist_keyboard/
+catkin build teleop_twist_keyboard
+source ../devel/setup.bash
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
+
+The aforementioned script will Clone, Compile and Run the `teleop_twist_keyboard` package \
+After running it, I'm able to control my robot using the keyboard \
+The following command and its output verifies that the package was built from source \
+![teleop built from source](Images/roscd_teleop.png)
+
+Controlling the robot using my keyboard \
+![keyboard control](Images/keyboard_control.gif)
+
+### Task 5
+
+```bash
+code ~/Workspaces/smb_ws/src/smb_common/smb_gazebo/launch/my_smb_gazebo.launch #creating the launch file
+roslaunch smb_gazebo my_smb_gazebo.launch
+```
+
+The `my_smb_gazebo.launch` file:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+    <include file="$(find smb_gazebo)/launch/smb_gazebo.launch">
+        <arg name="world_file" value="worlds/robocup14_spl_field.world"/>
+    </include>
+</launch>
+```
+
+Screenshots after launching: \
+![Robocup World](Images/robocup_world.png) \
+![Robocup World 2](Images/robocup_world2.png)
