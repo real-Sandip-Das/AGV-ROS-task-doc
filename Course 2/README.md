@@ -265,7 +265,7 @@ camera:
 ```xml
 <launch>
   <node name="name" pkg="package" type="node_type">
-    <rosparam command="load" file="$(find package)"/config/config.yaml" />
+    <rosparam command="load" file="$(find package)/config/config.yaml" />
   </node>
 </launch>
 ```
