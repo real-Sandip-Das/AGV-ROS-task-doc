@@ -344,7 +344,7 @@ Initializing the package:
 
 ```bash
 cd ~/git
-catkin_create_pkg smb_highlevel_controller {roscpp sensor_msgs}
+catkin_create_pkg smb_highlevel_controller roscpp sensor_msgs
 cd smb_highlevel_controller/
 git init
 ```
@@ -361,8 +361,17 @@ Done already!
 
 ### Part 4
 
+### Part 10
+
+![pointcloud_to_laserscan_info](Images/rosnode_info.png)
+
 <!--TODO: add this in the right place: -->
 
 ```bash
 sudo apt-get install -y ros-noetic-pointcloud-to-laserscan
+sudo apt-get install -y ros-noetic-velodyne-simulator #installs both ros-noetic-velodyne-description & ros-noetic-velodyne-gazebo-plugins reference:http://wiki.ros.org/velodyne_simulator?distro=noetic
+rosdep update && rosdep install --from-paths src --ignore-src --rosdistro=$ROS_DISTRO -y #Installed ros-noetic-interactive-marker-twist-server, ros-noetic-joint-trajectory-controller ros-noetic-robot-localization ros-noetic-twist-mux
+#Uninstalled: sudo apt-get install -y ros-noetic-twist-mux
+#Uninstalled: sudo apt-get install -y ros-noetic-robot-localization
 ```
+<!-- http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/PointCloud2.html resources for number of points task --->
