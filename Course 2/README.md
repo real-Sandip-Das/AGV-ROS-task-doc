@@ -370,8 +370,5 @@ Done already!
 ```bash
 sudo apt-get install -y ros-noetic-pointcloud-to-laserscan
 sudo apt-get install -y ros-noetic-velodyne-simulator #installs both ros-noetic-velodyne-description & ros-noetic-velodyne-gazebo-plugins reference:http://wiki.ros.org/velodyne_simulator?distro=noetic
-rosdep update && rosdep install --from-paths src --ignore-src --rosdistro=$ROS_DISTRO -y #Installed ros-noetic-interactive-marker-twist-server, ros-noetic-joint-trajectory-controller ros-noetic-robot-localization ros-noetic-twist-mux
-#Uninstalled: sudo apt-get install -y ros-noetic-twist-mux
-#Uninstalled: sudo apt-get install -y ros-noetic-robot-localization
 ```
 <!-- http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/PointCloud2.html resources for number of points task --->
