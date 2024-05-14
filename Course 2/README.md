@@ -359,16 +359,79 @@ The package is then developed and tracked using git, the repo is available [here
 
 Done already!
 
-### Part 4
+### Part 4, 5 and 6
 
-### Part 10
+The subscriber Node is Implemented using the following C++ files: \
+`include/smb_highlevel_controller/smb_highlevel_controller.hpp` \
+`src/smb_highlevel_controller.cpp` \
+`src/smb_highlevel_controller_node.cpp`
 
-![pointcloud_to_laserscan_info](Images/rosnode_info.png)
+The Parameter file is: \
+`config/config.yaml`
 
-<!--TODO: add this in the right place: -->
+### Part 7
+
+The launch file was added, modified, tested and then renamed to: \
+`launch/my_smb_gazebo_ex2.launch`
+
+### Part 8
+
+Even though it's not necessary(since, in `smb_gazebo.launch`, the default value is set to `true`), the launch file from **Part 7** was modified to do so
+
+### Part 9
+
+First, the following dependencies were installed in order to visualize the sensor data
 
 ```bash
 sudo apt-get install -y ros-noetic-pointcloud-to-laserscan
 sudo apt-get install -y ros-noetic-velodyne-simulator #installs both ros-noetic-velodyne-description & ros-noetic-velodyne-gazebo-plugins reference:http://wiki.ros.org/velodyne_simulator?distro=noetic
 ```
-<!-- http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/PointCloud2.html resources for number of points task --->
+
+The rest was done in the rviz GUI, and the resultant rviz configuration was saved in: \
+`rviz/smb_highlevel_controller.rviz`
+
+The launch file `launch/my_smb_gazebo_ex2.launch` was also modified to launch rviz with that specific configuration
+
+### Part 10
+
+The node `/pointcloud_to_laserscan`(from the `ros-noetic-pointcloud-to-laserscan` package) is synthesizing LiDAR data(and publishing them as messages of type `sensor_msgs/LaserScan`) from the 3D Pointcloud data coming/generated from the simulation (a functionality provided by the `velodyne-description` and `velodyne-gazebo-plugins` packages)
+
+![pointcloud_to_laserscan_info](Images/rosnode_info.png)
+
+Clearly, it is publishing to the following topics:
+
+- `/rosout`: only for logging
+- `/scan`: sending resultant LiDAR scan data
+
+and it is subscribed to the following topics:
+
+- `/clock`
+- `/tf`
+- `/tf_static`
+- `rslidar_points`: This is where the node is getting raw 3D Pointcloud data from
+
+Visualization is done in rviz and the rviz configuration is saved again
+
+![rviz visualization](Images/rviz.png)
+
+(at this point, due to some error rviz stopped working, and it had something to do with the OGRE-1.9.0 library, so I had to remove and reinstall the package `libogre-1.9.0v5`, which for some reason remove `gazebo11` too, so I had to reinstall gazebo and related packages using the following command:)
+
+```bash
+sudo apt install ros-noetic-gazebo*
+```
+
+### Part 11
+
+[This](http://docs.ros.org/en/noetic/api/sensor_msgs/html/msg/PointCloud2.html) page was followed to learn mode about the type of messages being published to the `rslidar_points` topic
+
+The C++ source files describing the node class(i.e. \
+`include/smb_highlevel_controller/smb_highlevel_controller.hpp` \
+`src/smb_highlevel_controller.cpp` \
+) were modified to add another subscriber(in the .hpp file, `doxygen` comments were added to describe which member object/function does what)
+
+Explanation:
+
+- In a `sensor_msgs/PointCloud2` message, the actual data is stored in an array of bytes(`uint8[] data`) \
+- Total Number of bytes in that array(`data`) can be calculated by `(row_step*height)`, where `uint32 row_step` and `uint32 height` are also members of the message definition
+- Since each 3D Point in the cloud takes up `point_step`(`uint32 point_step` is also a member of the message definition) number of bytes in `data`, the total number of 3D Points described by the message would be `((row_step*height)/point_step)`
+- This same logic has been implemented in my C++ program, just to be more confident about it, I've also experimented with type casting to float and then doing float division to make sure that the division actually gives an Integer
