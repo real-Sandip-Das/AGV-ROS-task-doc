@@ -31,3 +31,5 @@ python3-wstool build-essential #Dependencies for building packages
 sudo rosdep init && rosdep update #Initializing rosdep
 sudo apt install python3-catkin-tools python3-catkin-lint #Installing catkin
 ```
+
+Further instructions for installing Turtlesim3 and Turtlebot3 packages have been given in the `README.md` of the repository's home directory for Task 2

@@ -22,9 +22,18 @@ rosrun tf tf_monitor
 rosrun tf tf_echo <source_frame> <target_frame>
 
 #Generating visual graph of the Transform Tree
-rosrun tf view_frames
+rosrun tf view_frames #Currently not working in ROS Noetic
 rosrun tf2_tools view_frames.py #had to run: sudo apt-get -y install ros-noetic-tf2-tools
 ```
+
+Example outputs after launching `smb_gazebo`:
+
+`rosrun tf tf_monitor`: \
+![tf_monitor](Images/tf_monitor.png)
+
+`rosrun tf2_tools view_frames.py`: \
+![view_frames_terminal](Images/view_frames_terminal.png) \
+![frames_pdf.png](Images/frames_pdf.png)
 
 #### TF Transform Listener C++ API
 
@@ -151,6 +160,8 @@ rosrun rqt_logger_level rqt_logger_level
 
 ## Exercises
 
+### Part 1
+
 Since, there are still a lot of unresolved error/warning messages shown while launching `smb_gazebo`, `rosdep` was used to install all the remaining dependencies of the project.
 
 The following commands can be used to do so
@@ -162,4 +173,10 @@ rosdep update && rosdep install --from-paths src --ignore-src --rosdistro=$ROS_D
 # ros-noetic-robot-localization, ros-noetic-twist-mux
 ```
 
-t
+Then the `smb_common_v2.zip` archive was extracted, placed into the `~/git` folder, and symlink to this folder was created from: `~/Workspaces/smb_ws/src/smb_common/`
+
+Then, `catkin build smb_gazebo` was executed
+
+### Part 2
+
+
