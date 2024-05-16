@@ -179,4 +179,4 @@ Then, `catkin build smb_gazebo` was executed
 
 ### Part 2
 
-
+<!-- TODO: complete Exercises 3 -->
