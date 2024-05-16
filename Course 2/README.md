@@ -349,7 +349,7 @@ cd smb_highlevel_controller/
 git init
 ```
 
-The package is then developed and tracked using git, the repo is available [here](https://github.com/real-Sandip-Das/smb_highlevel_controller)
+The package is then developed and tracked using git, the repo is available [here](https://github.com/real-Sandip-Das/smb_highlevel_controller/tree/Exercise2)
 
 ### Part 2
 
@@ -435,3 +435,5 @@ Explanation:
 - Total Number of bytes in that array(`data`) can be calculated by `(row_step*height)`, where `uint32 row_step` and `uint32 height` are also members of the message definition
 - Since each 3D Point in the cloud takes up `point_step`(`uint32 point_step` is also a member of the message definition) number of bytes in `data`, the total number of 3D Points described by the message would be `((row_step*height)/point_step)`
 - This same logic has been implemented in my C++ program, just to be more confident about it, I've also experimented with type casting to float and then doing float division to make sure that the division actually gives an Integer
+
+The end result can be found in the `Exercise2` branch of [this](https://github.com/real-Sandip-Das/smb_highlevel_controller/tree/Exercise2) repository

@@ -179,4 +179,91 @@ Then, `catkin build smb_gazebo` was executed
 
 ### Part 2
 
-<!-- TODO: complete Exercises 3 -->
+Changing the `world_file` argument solves the problem
+
+```xml
+    <include file="$(find smb_gazebo)/launch/smb_gazebo.launch">
+        <arg name="laser_enabled" value="true" />
+        <arg name="world_file" value="$(find smb_highlevel_controller)/worlds/singlePillar.world" />
+    </include>
+```
+
+### Part 3
+
+In the Laser Scan, the closest point will be taken as the position of the pillar
+
+```cpp
+void SmbHighlevelController::topicCallback(const sensor_msgs::LaserScan& message)
+{
+  float smallest_distance = message.range_max;
+  int index_of_smallest_distance;
+  int index = 0;
+  for (float range: message.ranges) {
+    if ((message.range_min <= range) && (range <= message.range_max)) {
+      smallest_distance = std::min(smallest_distance, range);
+      index_of_smallest_distance = index;
+    }
+    index++;
+  }
+
+  /// finds out the position of the pillar using the closest point in the laser scan
+  pillar_pos_x_ = smallest_distance*std::cos(message.angle_min+message.angle_increment*index_of_smallest_distance);
+  pillar_pos_y_ = smallest_distance*std::sin(message.angle_min+message.angle_increment*index_of_smallest_distance);
+
+  ROS_INFO_STREAM("Minimum Range: " << smallest_distance);
+}
+```
+
+### Part 4
+
+Modified the C++ source to do so
+
+### Part 5
+
+According to [this](https://youtu.be/qIpiqhO3ITY) tutorial, I should take the y-coordinate of the relative position of the Pillar as the error term \
+and use it to send a proportional angular velocity(along z axis) command \
+with a constant linear velocity for moving forward
+
+Using this hint, I created a Proportional controller that will drive the robot to the pillar
+
+```cpp
+  /// finds out the position of the pillar using the closest point in the laser scan
+  double pillarAngularPos_ = message.angle_min+message.angle_increment*index_of_smallest_distance;
+
+  // double pillar_pos_x_ = smallest_distance*std::cos(pillarAngularPos_);
+  double pillar_pos_y_ = smallest_distance*std::sin(pillarAngularPos_);
+
+  // P controller implementation
+  geometry_msgs::Twist command;
+  command.angular.x = 0;
+  command.angular.y = 0;
+  command.angular.z = k_p_*pillar_pos_y_;
+  command.linear.x = constLinVel_;
+  command.linear.y = 0;
+  command.linear.z = 0;
+
+  publisherCmdVel_.publish(command);
+```
+
+the parameters `k_p` and `const_lin_vel` (in `config/config.yaml`) respectively can be used to modify the linear velocity and the Proportional gain respectively
+
+Also, the launch file has been modified accordingly to make the pillar visible
+
+```xml
+    <include file="$(find smb_gazebo)/launch/smb_gazebo.launch">
+        <arg name="laser_enabled" value="true" />
+        <arg name="world_file" value="$(find smb_highlevel_controller)/worlds/singlePillar.world" />
+        <arg name="laser_scan_min_height" value="-0.2"/>
+        <arg name="laser_scan_max_height" value="1.0"/>
+    </include>
+```
+
+### Part 6
+
+Already done in Exercise 2
+
+### Part 7
+
+Already done in Exercise 2
+
+### Part 8
