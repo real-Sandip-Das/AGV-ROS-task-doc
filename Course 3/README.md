@@ -267,3 +267,70 @@ Already done in Exercise 2
 Already done in Exercise 2
 
 ### Part 8
+
+#### (easy part)
+
+The trickiest step of the last part(for me) was getting the topic right inside `rviz`
+
+to complete the easy subpart of this task, I added the following lines in the callback function, and also added the necessary dependencies in Header files, CMakeLists.txt and Package.xml
+
+```cpp
+  /// finds out the position of the pillar using the closest point in the laser scan
+  double pillarAngularPos_ = message.angle_min+message.angle_increment*index_of_smallest_distance;
+
+  double pillar_pos_x_ = smallest_distance*std::cos(pillarAngularPos_);
+  double pillar_pos_y_ = smallest_distance*std::sin(pillarAngularPos_);
+
+  // geometry_msgs::TransformStamped transformStamped;
+  // try {
+  //   transformStamped = tfBuffer_.lookupTransform("rslidar", "odom", ros::Time(0));
+  // } catch (tf2::TransformException &exception) {
+  //   ROS_WARN("%s", exception.what());
+  //   ros::Duration(1.0).sleep();
+  // }
+
+  visualization_msgs::Marker marker;
+  marker.header.frame_id = "rslidar";
+  marker.header.stamp = ros::Time();
+  marker.ns = "smb_highlevel_controller";
+  marker.id = 0;
+  marker.type = visualization_msgs::Marker::SPHERE;
+  marker.action = visualization_msgs::Marker::ADD;
+  
+  geometry_msgs::Point pos_wrt_rslidar;
+  pos_wrt_rslidar.x = pillar_pos_x_;
+  pos_wrt_rslidar.y = pillar_pos_y_;
+  pos_wrt_rslidar.z = 0;
+
+  // transform(pos_wrt_rslidar, marker.pose.position, transformStamped.transform);
+  marker.pose.position = pos_wrt_rslidar;
+  marker.pose.orientation.x = 0.0;
+  marker.pose.orientation.y = 0.0;
+  marker.pose.orientation.z = 0.0;
+  marker.pose.orientation.w = 1.0;
+  marker.scale.x = 0.3;
+  marker.scale.y = 0.3;
+  marker.scale.z = 0.3;
+  marker.color.a = 1.0;
+  marker.color.r = 0.0;
+  marker.color.g = 1.0;
+  marker.color.b = 0.0;
+
+  pubVis_.publish(marker);
+```
+
+In the end, to view the Marker in `rviz`, one needs to select the right topic the Marker plugin.
+
+Initially, I entered `/visualization_marker` in the `rviz` plugin and it wasn't working
+
+Then, among a lot of debugging attempts, in one I did `rostopic list` inside the terminal, and that's when I realized that the marker was being published inside the node's namespace (i.e. `/smb_highlevel_controller/visualization_marker` instead of `/visualization_marker`), so I changed the topic parameter in the `rviz` plugin, and it worked fine
+
+I also realized that if I would've written `/visualization_marker` instead of `visualization_marker` in the line of the Contructor function where the publisher object for the marker initialized, \
+(i.e. this line: `pubVis_ = nodeHandle_.advertise<visualization_msgs::Marker>("visualization_marker", 0 );`) \
+Then, `/visualization_marker` would've worked in the `rviz` plugin (I tried this, and it works)
+
+#### (hard part)
+
+The package `smb_highlevel_controller` that was developed by me as a result of following these exercise was being tracked by git in [this](https://github.com/real-Sandip-Das/smb_highlevel_controller) repository
+
+The code for exercise 3 (this exercise) can be found in the `master` branch

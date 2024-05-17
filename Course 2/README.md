@@ -408,7 +408,7 @@ and it is subscribed to the following topics:
 - `/clock`
 - `/tf`
 - `/tf_static`
-- `rslidar_points`: This is where the node is getting raw 3D Pointcloud data from
+- `/rslidar_points`: This is where the node is getting raw 3D Pointcloud data from
 
 Visualization is done in rviz and the rviz configuration is saved again
 
