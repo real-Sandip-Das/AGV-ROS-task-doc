@@ -160,6 +160,8 @@ rosrun rqt_logger_level rqt_logger_level
 
 ## Exercises
 
+While doing the exercises, the source code was being tracked in [this](https://github.com/real-Sandip-Das/smb_highlevel_controller) repository
+
 ### Part 1
 
 Since, there are still a lot of unresolved error/warning messages shown while launching `smb_gazebo`, `rosdep` was used to install all the remaining dependencies of the project.
@@ -330,6 +332,56 @@ I also realized that if I would've written `/visualization_marker` instead of `v
 Then, `/visualization_marker` would've worked in the `rviz` plugin (I tried this, and it works)
 
 #### (hard part)
+
+In order to do the hard subpart, I had to learn about a few TF Transform system message types
+
+I also had to learn about Quaternions from scratch, in order to implement a coordinate transformation function from scratch.
+
+The following transformation function was developed
+
+```cpp
+void SmbHighlevelController::transform(geometry_msgs::Point pointIn, geometry_msgs::Point& pointOut, geometry_msgs::Transform transform)
+{
+  /// let, v = pointIn (3D Vector), u = (vector formed by 3D components of the quaternion in transform), s = Scalar part of the quaternion contained in transform
+  double u_dot_u = std::pow(transform.rotation.x, 2) + std::pow(transform.rotation.y, 2) + std::pow(transform.rotation.z, 2);
+  double u_dot_v = pointIn.x*transform.rotation.x + pointIn.y*transform.rotation.y + pointIn.z*transform.rotation.z;
+  double s = transform.rotation.w;
+  double s_square_minus_u_dot_u = std::pow(s, 2) - u_dot_u;
+
+  // rotation part
+  pointOut.x = 2*u_dot_v*transform.rotation.x + s_square_minus_u_dot_u*pointIn.x + 2*s*(transform.rotation.y*pointIn.z - transform.rotation.z*pointIn.y);
+  pointOut.y = 2*u_dot_v*transform.rotation.y + s_square_minus_u_dot_u*pointIn.y + 2*s*(transform.rotation.z*pointIn.x - transform.rotation.x*pointIn.z);
+  pointOut.z = 2*u_dot_v*transform.rotation.z + s_square_minus_u_dot_u*pointIn.z + 2*s*(transform.rotation.x*pointIn.y - transform.rotation.y*pointIn.x);
+
+  //translation part
+  pointOut.x = pointOut.x + transform.translation.x;
+  pointOut.y = pointOut.y + transform.translation.y;
+  pointOut.z = pointOut.z + transform.translation.z;
+}
+```
+
+The translation part is totally self-explanatory and very easy to understand, clearly it won't create any problems if this code was used as a part of a bigger software in any imaginable parallel universe (scenario)
+
+Here is some explanation for the Rotation part:
+
+Initially I was planning to create separate methods for multiplying quaternions, finding conjugate of a quaternion and converting a 3D Vector to a Quaternion(keeping the real part zero) \
+and using them together to accomplish rotation
+
+but then I wondered whether this could be optimised by using the assumption that the quaternions have unit modulus and that the vector(converted to a quaternion), during multiplication is sandwitched between the same quaternion and its conjugate (and also by precalculating a few stuff)
+
+##### Mathematical Explanation
+
+Let, the vector(describing the point to be rotated) is $\vec v$, and the quaternion(describing the rotation) is $\vec u+s$ where, $\vec u$ is just the sum of the $i, j, k$ components and $s$ is the real component
+
+Clearly, $s - \vec u$ is the conjugate of the quaternion
+
+The new vector(describing the point after rotation) is clearly,
+
+$(\vec u+s)(\vec v + 0)(s - \vec u)$ \
+$=(\vec u\times\vec v+s\vec v-\vec u\cdot\vec v)(s - \vec u)$ \
+$=2(\vec u\cdot\vec v)\vec u+(s^2-\vec u\cdot\vec u)\vec v+2s(\vec u\times\vec v)$
+
+The last expression in the previous calculation is used in the code
 
 The package `smb_highlevel_controller` that was developed by me as a result of following these exercise was being tracked by git in [this](https://github.com/real-Sandip-Das/smb_highlevel_controller) repository
 
