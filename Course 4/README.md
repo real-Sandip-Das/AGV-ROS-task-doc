@@ -58,7 +58,7 @@ ROS provides command line tools for recording topics in a bag
 ```bash
 #Recording topics in a bag
 rosbag record --all #records all the topics
-rosbag record topic_1, topic_2, topic_3 #only records the topics named topic_1, topic_2 and topic_3
+rosbag record topic_1 topic_2 topic_3 #only records the topics named topic_1, topic_2 and topic_3
 #Use Ctrl+C to stop recording
 #The recording will be saved with the start date and time as *.bag file name in the current folder
 

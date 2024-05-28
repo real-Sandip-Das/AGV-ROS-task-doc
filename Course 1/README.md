@@ -32,6 +32,8 @@ rostopic hz /<topic>
 #each message type is/can be described by a *.msg(much like C/C++ Structures) file
 #check the type of a topic
 rostopic type /<topic>
+#view the message type definition
+rosmsg show package_name/type_name
 #publish a message to a topic
 rostopic pub /<topic> <type> <data>
 ```
