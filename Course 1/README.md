@@ -89,7 +89,8 @@ catkin clean
 #Checking catkin workspace
 catkin config
 #building Debug instead of Release
-catkin build --cmake-args-DCMAKE_BUILD_TYPE=Debug
+catkin config --cmake-args -DCMAKE_BUILD_TYPE=Debug
+catkin build <package_name>
 ```
 
 The ROS Launch command
